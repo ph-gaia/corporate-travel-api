@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: onfly_app
+    volumes:
+      - ./onfly-app:/var/www/onfly-app
+      - ./docker/php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+
+  webserver:
+    image: nginx:latest
+    container_name: onfly_webserver
+    volumes:
+      - ./onfly-app:/var/www/onfly-app
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+
+  db:
+    image: mysql:9.2
+    container_name: onfly_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: onfly
+      MYSQL_USER: onfly
+      MYSQL_PASSWORD: 12345
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
