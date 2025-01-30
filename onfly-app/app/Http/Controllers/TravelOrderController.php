@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TravelOrderRequest;
+use App\Http\Requests\UpdateTravelOrderStatusRequest;
+use App\Models\TravelOrder;
 use App\Services\TravelOrderService;
 
 class TravelOrderController extends Controller
@@ -21,5 +23,12 @@ class TravelOrderController extends Controller
         $travelOrder = $this->travelOrderService->create($validated);
 
         return response()->json($travelOrder, 201);
+    }
+
+    public function updateStatus(UpdateTravelOrderStatusRequest $request, TravelOrder $travelOrder)
+    {
+        $travelOrder = $this->travelOrderService->update($request->status, $travelOrder);
+
+        return response()->json($travelOrder);
     }
 }

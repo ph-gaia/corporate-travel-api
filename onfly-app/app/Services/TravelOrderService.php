@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\TravelOrder;
 use App\Repositories\TravelOrderInterface;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,5 +24,11 @@ class TravelOrderService
             'return_date' => $data['return_date'],
             'status' => 'requested',
         ]);
+    }
+
+    public function update($status, TravelOrder $travelOrder)
+    {
+        $travelOrder->update(['status' => $status]);
+        return $travelOrder;
     }
 }
