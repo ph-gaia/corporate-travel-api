@@ -15,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\UserRepositoryInterface::class,
             \App\Repositories\UserRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\TravelOrderInterface::class,
+            \App\Repositories\TravelOrderRepository::class
+        );
     }
 
     /**

@@ -2,27 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TravelOrder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\TravelOrderRequest;
+use App\Services\TravelOrderService;
 
 class TravelOrderController extends Controller
 {
-    public function store(Request $request)
-    {
-        $request->validate([
-            'destination' => 'required|string|max:255',
-            'departure_date' => 'required|date|after:today',
-            'return_date' => 'required|date|after:departure_date',
-        ]);
+    protected $travelOrderService;
 
-        $travelOrder = TravelOrder::create([
-            'user_id' => Auth::id(),
-            'destination' => $request->destination,
-            'departure_date' => $request->departure_date,
-            'return_date' => $request->return_date,
-            'status' => 'requested',
-        ]);
+    public function __construct(TravelOrderService $travelOrderService)
+    {
+        $this->travelOrderService = $travelOrderService;
+    }
+
+    public function store(TravelOrderRequest $request)
+    {
+        $validated = $request->validated();
+
+        $travelOrder = $this->travelOrderService->create($validated);
 
         return response()->json($travelOrder, 201);
     }
