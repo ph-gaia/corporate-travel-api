@@ -16,7 +16,7 @@ class TravelOrderFactory extends Factory
             'destination'=> $this->faker->city,
             'departure_date' => $this->faker->dateTimeBetween('now', '+1 month'),
             'return_date' => $this->faker->dateTimeBetween('+2 months', '+3 months'),
-            'status'     => 'solicitado',
+            'status'     => 'requested',
         ];
     }
 }
