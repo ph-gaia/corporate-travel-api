@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\LoginRequest;
 use App\Services\UserService;
@@ -22,7 +23,7 @@ class AuthController extends Controller
 
         $user = $this->userService->create($validated);
 
-        return response()->json($user, 201);
+        return ApiResponse::created('User created successfully', $user);
     }
 
     public function login(LoginRequest $request)
@@ -32,20 +33,20 @@ class AuthController extends Controller
         $token = $this->userService->login($validated);
 
         if (!$token) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return ApiResponse::unauthorized();
         }
 
-        return response()->json(['token' => $token]);
+        return ApiResponse::success("Login successful", ['token' => $token]);
     }
 
     public function logout()
     {
         $this->userService->logout();
-        return response()->json(['message' => 'Logged out']);
+        return ApiResponse::success('Logged out');
     }
 
     public function protectedRoute()
     {
-        return response()->json(['message' => 'You are authenticated']);
+        return ApiResponse::success('You are authenticated');
     }
 }

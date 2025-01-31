@@ -21,7 +21,14 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-            ->assertJsonStructure(['user', 'token']);
+            ->assertJsonStructure([
+                'message',
+                'error',
+                'data' => [
+                    'user',
+                    'token'
+                ]
+            ]);
     }
 
     /** @test */
@@ -38,7 +45,13 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['token']);
+            ->assertJsonStructure([
+                'message',
+                'error',
+                'data' => [
+                    'token'
+                ]
+            ]);
     }
 
     /** @test */

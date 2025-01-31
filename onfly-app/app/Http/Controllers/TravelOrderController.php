@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Http\Requests\TravelOrderRequest;
 use App\Http\Requests\UpdateTravelOrderStatusRequest;
 use App\Models\TravelOrder;
@@ -19,16 +20,14 @@ class TravelOrderController extends Controller
 
     public function index(Request $request)
     {
-        return response()->json([
-            'data' => $this->travelOrderService->listTravelOrders($request)
-        ]);
+        return ApiResponse::success("", $this->travelOrderService->listTravelOrders($request));
     }
 
     public function show($id)
     {
         $order = $this->travelOrderService->getTravelOrderById($id);
 
-        return response()->json($order);
+        return ApiResponse::success("", $order);
     }
 
     public function store(TravelOrderRequest $request)
@@ -37,13 +36,13 @@ class TravelOrderController extends Controller
 
         $travelOrder = $this->travelOrderService->create($validated);
 
-        return response()->json($travelOrder, 201);
+        return ApiResponse::created("Order created successfully", $travelOrder);
     }
 
     public function updateStatus(UpdateTravelOrderStatusRequest $request, TravelOrder $travelOrder)
     {
         $travelOrder = $this->travelOrderService->update($request->status, $travelOrder);
 
-        return response()->json($travelOrder);
+        return ApiResponse::success('Status updated successfully', $travelOrder);
     }
 }

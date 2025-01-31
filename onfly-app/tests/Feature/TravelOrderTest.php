@@ -27,8 +27,12 @@ class TravelOrderTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJson([
-                'destination' => 'Belo Horizonte',
-                'status' => 'requested',
+                'message' => 'Order created successfully',
+                'error' => '',
+                'data' => [
+                    'destination' => 'Belo Horizonte',
+                    'status' => 'requested',
+                ]
             ]);
 
         $this->assertDatabaseHas('travel_orders', [
@@ -58,7 +62,13 @@ class TravelOrderTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-            ->assertJson(['status' => 'approved']);
+            ->assertJson([
+                'message' => 'Status updated successfully',
+                'error' => '',
+                'data' => [
+                    'status' => 'approved',
+                ]
+            ]);
 
         $this->assertDatabaseHas('travel_orders', [
             'id' => $travelOrder->id,
@@ -170,11 +180,15 @@ class TravelOrderTest extends TestCase
             ->getJson("/api/travel-orders/{$order->id}")
             ->assertStatus(200)
             ->assertJson([
-                'id' => $order->id,
-                'destination' => $order->destination,
-                'departure_date' => $order->departure_date,
-                'return_date' => $order->return_date,
-                'status' => $order->status,
+                'message' => '',
+                'error' => '',
+                'data' => [
+                    'id' => $order->id,
+                    'destination' => $order->destination,
+                    'departure_date' => $order->departure_date,
+                    'return_date' => $order->return_date,
+                    'status' => $order->status,
+                ]
             ]);
     }
 
@@ -197,7 +211,13 @@ class TravelOrderTest extends TestCase
         $this->actingAs($admin, 'api')
             ->getJson("/api/travel-orders/{$order->id}")
             ->assertStatus(200)
-            ->assertJson(['id' => $order->id]);
+            ->assertJson([
+                'message' => '',
+                'error' => '',
+                'data' => [
+                    'id' => $order->id
+                ]
+            ]);
     }
 
     public function test_it_returns_404_if_travel_order_does_not_exist()
