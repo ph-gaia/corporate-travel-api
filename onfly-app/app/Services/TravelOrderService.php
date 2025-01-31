@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendTravelOrderNotification;
 use App\Models\TravelOrder;
 use App\Repositories\TravelOrderInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -46,6 +47,9 @@ class TravelOrderService
     public function update($status, TravelOrder $travelOrder)
     {
         $travelOrder->update(['status' => $status]);
+
+        SendTravelOrderNotification::dispatch($travelOrder);
+
         return $travelOrder;
     }
 }
