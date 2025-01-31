@@ -90,4 +90,74 @@ class TravelOrderTest extends TestCase
             'status' => 'requested'
         ]);
     }
+
+    public function test_user_can_only_see_their_own_travel_orders()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        TravelOrder::factory()->count(3)->create(['user_id' => $user->id]);
+        TravelOrder::factory()->count(2)->create(['user_id' => $otherUser->id]);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/travel-orders')
+            ->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_admin_can_see_all_travel_orders()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        TravelOrder::factory()->count(5)->create();
+
+        $this->actingAs($admin, 'api')
+            ->getJson('/api/travel-orders')
+            ->assertStatus(200)
+            ->assertJsonCount(5, 'data');
+    }
+
+    public function test_user_can_filter_travel_orders_by_status()
+    {
+        $user = User::factory()->create();
+        TravelOrder::factory()->create(['user_id' => $user->id, 'status' => 'requested']);
+        TravelOrder::factory()->create(['user_id' => $user->id, 'status' => 'approved']);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/travel-orders?status=requested')
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data');
+    }
+
+    public function test_user_can_filter_travel_orders_by_date_range()
+    {
+        $user = User::factory()->create();
+        TravelOrder::factory()->create([
+            'user_id' => $user->id,
+            'departure_date' => '2025-01-01',
+            'return_date' => '2025-01-10'
+        ]);
+        TravelOrder::factory()->create([
+            'user_id' => $user->id,
+            'departure_date' => '2025-02-01',
+            'return_date' => '2025-02-10'
+        ]);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/travel-orders?from=2025-01-01&to=2025-01-31')
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data'); 
+    }
+
+    public function test_user_can_filter_travel_orders_by_destination()
+    {
+        $user = User::factory()->create();
+        TravelOrder::factory()->create(['user_id' => $user->id, 'destination' => 'Manaus']);
+        TravelOrder::factory()->create(['user_id' => $user->id, 'destination' => 'Fortaleza']);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/travel-orders?destination=Fortaleza')
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data');
+    }
 }
