@@ -6,6 +6,7 @@ use App\Http\Requests\TravelOrderRequest;
 use App\Http\Requests\UpdateTravelOrderStatusRequest;
 use App\Models\TravelOrder;
 use App\Services\TravelOrderService;
+use Illuminate\Http\Request;
 
 class TravelOrderController extends Controller
 {
@@ -14,6 +15,13 @@ class TravelOrderController extends Controller
     public function __construct(TravelOrderService $travelOrderService)
     {
         $this->travelOrderService = $travelOrderService;
+    }
+
+    public function index(Request $request)
+    {
+        return response()->json([
+            'data' => $this->travelOrderService->listTravelOrders($request)
+        ]);
     }
 
     public function store(TravelOrderRequest $request)
