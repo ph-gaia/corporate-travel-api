@@ -15,6 +15,11 @@ class TravelOrderService
         $this->travelOrderRepository = $travelOrderRepository;
     }
 
+    public function listTravelOrders($request)
+    {
+        return $this->travelOrderRepository->listTravelOrders($request);
+    }
+
     public function create(array $data)
     {
         return $this->travelOrderRepository->create([
