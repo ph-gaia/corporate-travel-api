@@ -14,8 +14,8 @@ class TravelOrderFactory extends Factory
         return [
             'user_id'    => \App\Models\User::factory(),
             'destination'=> $this->faker->city,
-            'departure_date' => $this->faker->dateTimeBetween('now', '+1 month'),
-            'return_date' => $this->faker->dateTimeBetween('+2 months', '+3 months'),
+            'departure_date' => $this->faker->dateTimeBetween('now', '+1 month')->format('Y-m-d'),
+            'return_date' => $this->faker->dateTimeBetween('+2 months', '+3 months')->format('Y-m-d'),
             'status'     => 'requested',
         ];
     }

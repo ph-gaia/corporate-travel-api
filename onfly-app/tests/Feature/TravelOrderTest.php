@@ -146,7 +146,7 @@ class TravelOrderTest extends TestCase
         $this->actingAs($user, 'api')
             ->getJson('/api/travel-orders?from=2025-01-01&to=2025-01-31')
             ->assertStatus(200)
-            ->assertJsonCount(1, 'data'); 
+            ->assertJsonCount(1, 'data');
     }
 
     public function test_user_can_filter_travel_orders_by_destination()
@@ -159,5 +159,53 @@ class TravelOrderTest extends TestCase
             ->getJson('/api/travel-orders?destination=Fortaleza')
             ->assertStatus(200)
             ->assertJsonCount(1, 'data');
+    }
+
+    public function test_user_can_view_their_own_travel_order()
+    {
+        $user = User::factory()->create();
+        $order = TravelOrder::factory()->create(['user_id' => $user->id]);
+
+        $this->actingAs($user, 'api')
+            ->getJson("/api/travel-orders/{$order->id}")
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $order->id,
+                'destination' => $order->destination,
+                'departure_date' => $order->departure_date,
+                'return_date' => $order->return_date,
+                'status' => $order->status,
+            ]);
+    }
+
+    public function test_user_cannot_view_other_users_travel_order()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $order = TravelOrder::factory()->create(['user_id' => $otherUser->id]);
+
+        $this->actingAs($user, 'api')
+            ->getJson("/api/travel-orders/{$order->id}")
+            ->assertStatus(404);
+    }
+
+    public function test_admin_can_view_any_travel_order()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $order = TravelOrder::factory()->create();
+
+        $this->actingAs($admin, 'api')
+            ->getJson("/api/travel-orders/{$order->id}")
+            ->assertStatus(200)
+            ->assertJson(['id' => $order->id]);
+    }
+
+    public function test_it_returns_404_if_travel_order_does_not_exist()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/travel-orders/99999')
+            ->assertStatus(404);
     }
 }
