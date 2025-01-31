@@ -24,6 +24,13 @@ class TravelOrderController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $order = $this->travelOrderService->getTravelOrderById($id);
+
+        return response()->json($order);
+    }
+
     public function store(TravelOrderRequest $request)
     {
         $validated = $request->validated();

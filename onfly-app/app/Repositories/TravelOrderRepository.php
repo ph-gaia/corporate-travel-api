@@ -34,4 +34,15 @@ class TravelOrderRepository implements TravelOrderInterface
 
         return $query->get();
     }
+
+    public function findById(int $id)
+    {
+        $query = TravelOrder::query();
+
+        if (!auth()->user()->is_admin) {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query->find($id);
+    }
 }

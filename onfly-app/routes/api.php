@@ -9,6 +9,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/travel-orders', [TravelOrderController::class, 'index']);
+    Route::get('/travel-orders/{id}', [TravelOrderController::class, 'show']);
     Route::post('/travel-orders', [TravelOrderController::class, 'store']);
     Route::patch('/travel-orders/{travelOrder}/status', [TravelOrderController::class, 'updateStatus']);
     Route::post('/logout', [AuthController::class, 'logout']);
