@@ -7,6 +7,7 @@ use App\Models\TravelOrder;
 use App\Repositories\TravelOrderInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use InvalidArgumentException;
 
 class TravelOrderService
 {
@@ -35,6 +36,10 @@ class TravelOrderService
 
     public function create(array $data)
     {
+        if ($data['return_date'] <= $data['departure_date']) {
+            throw new InvalidArgumentException("The return date must be after the departure date.");
+        }
+
         return $this->travelOrderRepository->create([
             'user_id' => Auth::id(),
             'destination' => $data['destination'],

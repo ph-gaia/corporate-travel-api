@@ -69,6 +69,11 @@ docker-compose exec app php artisan key:generate
 docker-compose exec app php artisan migrate
 ```
 
+**Executar os teste**
+```
+docker-compose exec app php artisan test
+```
+
 **Fila e Notificação de Pedidos**
 ```
 docker-compose exec app php artisan queue:work
