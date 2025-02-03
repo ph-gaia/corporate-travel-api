@@ -8,6 +8,7 @@ use App\Models\TravelOrder;
 use App\Models\User;
 use App\Repositories\TravelOrderInterface;
 use App\Repositories\TravelOrderRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
@@ -66,7 +67,7 @@ class TravelOrderServiceTest extends TestCase
 
     public function test_list_travel_orders_with_filters()
     {
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
         Auth::shouldReceive('user')->andReturn($user);
         Auth::shouldReceive('id')->andReturn($user->id);
         Auth::shouldReceive('check')->andReturn(true);
@@ -108,7 +109,7 @@ class TravelOrderServiceTest extends TestCase
 
     public function test_list_travel_orders_without_filters()
     {
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
         Auth::shouldReceive('user')->andReturn($user);
         Auth::shouldReceive('id')->andReturn($user->id);
         Auth::shouldReceive('check')->andReturn(true);
@@ -132,5 +133,79 @@ class TravelOrderServiceTest extends TestCase
 
         $result = $service->listTravelOrders($request);
         $this->assertEquals($travelOrders, $result);
+    }
+
+    public function test_get_travel_order_by_id_found()
+    {
+        $user = User::factory()->create();
+        Auth::shouldReceive('user')->andReturn($user);
+        Auth::shouldReceive('id')->andReturn($user->id);
+        Auth::shouldReceive('check')->andReturn(true);
+
+        $travelOrderId = 1;
+        $travelOrder = new TravelOrder(['id' => $travelOrderId, 'destination' => 'São Paulo', 'user_id' => $user->id]);
+
+        $travelOrderRepositoryMock = Mockery::mock(TravelOrderRepository::class);
+        $travelOrderRepositoryMock
+            ->shouldReceive('findById')
+            ->once()
+            ->with($travelOrderId)
+            ->andReturn($travelOrder);
+
+        $this->app->instance(TravelOrderInterface::class, $travelOrderRepositoryMock);
+
+        $service = $this->app->make(TravelOrderService::class);
+
+        $result = $service->getTravelOrderById($travelOrderId);
+
+        $this->assertEquals($travelOrder, $result);
+    }
+
+    public function test_get_travel_order_by_id_not_found()
+    {
+        $user = User::factory()->create();
+        Auth::shouldReceive('user')->andReturn($user);
+        Auth::shouldReceive('id')->andReturn($user->id);
+        Auth::shouldReceive('check')->andReturn(true);
+
+        $travelOrderId = 999;
+
+        $travelOrderRepositoryMock = Mockery::mock(TravelOrderRepository::class);
+        $travelOrderRepositoryMock
+            ->shouldReceive('findById')
+            ->once()
+            ->with($travelOrderId)
+            ->andReturn(null);
+
+        $this->app->instance(TravelOrderInterface::class, $travelOrderRepositoryMock);
+
+        $service = $this->app->make(TravelOrderService::class);
+
+        $this->expectException(ModelNotFoundException::class);
+        $service->getTravelOrderById($travelOrderId);
+    }
+
+    public function test_get_travel_order_by_id_not_authorized()
+    {
+        $user = User::factory()->create(["is_admin" => false]);
+        Auth::shouldReceive('user')->andReturn($user);
+        Auth::shouldReceive('id')->andReturn($user->id + 1);
+        Auth::shouldReceive('check')->andReturn(true);
+
+        $travelOrderId = 1;
+
+        $travelOrderRepositoryMock = Mockery::mock(TravelOrderRepository::class);
+        $travelOrderRepositoryMock
+            ->shouldReceive('findById')
+            ->once()
+            ->with($travelOrderId)
+            ->andReturn(null);
+
+        $this->app->instance(TravelOrderInterface::class, $travelOrderRepositoryMock);
+
+        $service = $this->app->make(TravelOrderService::class);
+
+        $this->expectException(ModelNotFoundException::class);
+        $service->getTravelOrderById($travelOrderId);
     }
 }
