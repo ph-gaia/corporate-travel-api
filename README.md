@@ -51,12 +51,22 @@ $ cd onfly-challenge
 
 **Copiar o Arquivo de Configuração**
 ```
-cp .env.example .env
+cp onfly-app/.env.example onfly-app/.env
 ```
 
 **Inicie os containers Docker:**
 ```
-$ docker-compose up --build
+$ docker-compose up --build -d
+```
+
+**Instalar as dependências:**
+```
+docker-compose exec app composer install
+```
+
+**Gerar Chave secreta JWT:**
+```
+docker-compose exec app php artisan jwt:secret
 ```
 
 **Gerar Chave da Aplicação:**
