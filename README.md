@@ -1,4 +1,4 @@
-# Desafio técnico &middot; Onfly
+# Corporate Travel API
 > Este repositório contém uma API desenvolvida em Laravel para gestão de pedidos de viagem corporativa. O sistema permite que usuários criem, editem e visualizem pedidos de viagem, enquanto administradores podem aprovar ou cancelar pedidos.
 
 A infraestrutura do projeto é gerenciada por Docker, o que facilita a configuração de um ambiente consistente e pronto para uso.
@@ -103,7 +103,7 @@ http://localhost:8000/telescope
 ## Endpoints da API
 
 A API permite operações básicas para gerenciar os pedidos.
-> Mais detalhes dos endpoints você pode ver a documentação completa no microserviço [aqui](https://github.com/ph-gaia/onfly-challenge/blob/main/onfly-app/README.md)
+> Mais detalhes dos endpoints você pode ver a documentação completa no microserviço [aqui](https://github.com/ph-gaia/corporate-travel-api/blob/main/onfly-app/README.md)
 
 - POST /api/login: Autenticação
 - POST /api/register: Registrar novo usuário
