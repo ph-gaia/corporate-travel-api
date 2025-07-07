@@ -44,9 +44,9 @@ Para executar este projeto, você precisará do [Docker](https://www.docker.com/
 
 **Clonando o repositório**
 ```shell
-$ git clone https://github.com/ph-gaia/onfly-challenge.git
+$ git clone https://github.com/ph-gaia/corporate-travel-api.git
 
-$ cd onfly-challenge
+$ cd corporate-travel-api
 ```
 
 **Copiar o Arquivo de Configuração**
